@@ -13,8 +13,8 @@ mod utils;
     USE
 
 */
-use system_monitor::{cpu_check, ram_check, storage_check};
-use sysinfo::{self, System, Users};
+use system_monitor::{cpu_check, ram_check, storage_check, get_users};
+use sysinfo::{self, System, Networks};
 
 
 
@@ -22,12 +22,19 @@ use sysinfo::{self, System, Users};
 
 fn main() {
     
+    
+}
+
+
+
+/*    
     let mut sys = System::new_all();
 
     sys.refresh_all();
+
 
     let users = Users::new_with_refreshed_list();
     for user in users.list() {
         println!("{:?}", user.name());
     }
-}
+ */

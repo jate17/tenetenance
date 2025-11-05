@@ -22,3 +22,15 @@ pub fn conv_bytes_storage(bytes: u64) -> f64 {
     (bytes as f64 / 1_000_000_000.0)
 }
 
+
+/// 
+/// Convert bytes to Mb -> Network use
+/// 
+/// # Parms 
+/// - bytes: u64
+/// 
+/// # Return 
+/// - Float 64 in MB
+pub fn conv_bytes_to_mb_net(bytes: u64) -> f64{
+    bytes as f64 / 1_000_000.0
+}
