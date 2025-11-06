@@ -28,10 +28,9 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Ottenimento info sugli users  ✅
 - Ottenimento info sul network  ✅
 - Ottenimento info sui i processi ✅
-- Verifica di una versione di un software 
+- Verifica di una versione di un software ✅
 - Puliza file temporanei 
 - Puliza log 
-- Purge della ram
 - Controllo dei backup 
 - Start script di backup custom 
 - Verifica delle porte aperte 
@@ -47,5 +46,3 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Docker 
 - API 
 
-
- git commit -m "Add: Network; Add: Process;"

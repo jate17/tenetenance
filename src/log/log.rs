@@ -1,0 +1,30 @@
+use std::fs; 
+use std::time::{SystemTime, UNIX_EPOCH};
+
+pub fn clean_logs(log_dir: &str, keep_days: u64) -> Result<usize, Box<dyn std::error::Error>> {
+    let cutoff_time = SystemTime::now()
+        .duration_since(UNIX_EPOCH)?
+        .as_secs() - (keep_days * 86400);
+
+    let mut deleted_count = 0;
+
+    for entry in fs::read_dir(log_dir)? {
+        let entry = entry?;
+        let path = entry.path();
+        let filename = path.file_name().unwrap().to_string_lossy();
+
+        if  filename.ends_with(".log") || filename.ends_with(".txt") {
+            let metadata = fs::metadata(&path)?;
+            let modified = metadata.modified()?
+                .duration_since(UNIX_EPOCH)?
+                .as_secs();
+
+            if modified < cutoff_time {
+                fs::remove_file(&path)?;
+                deleted_count += 1;
+            }
+        }
+    }
+
+    Ok(deleted_count)
+}
