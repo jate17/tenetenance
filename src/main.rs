@@ -6,9 +6,11 @@
 
 mod system_monitor;
 mod utils;
+mod log;
 
 
 
+use std::{fs, time::{SystemTime, UNIX_EPOCH}};
 
 /*
 
@@ -16,16 +18,12 @@ mod utils;
 
 */
 use system_monitor::{cpu_check, ram_check, storage_check, get_users, get_temperature, process_info};
+use log::{clean_logs};
 
 
-
-
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     
-
 }
-
-
 
 
 

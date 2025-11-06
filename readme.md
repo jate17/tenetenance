@@ -30,7 +30,7 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Ottenimento info sui i processi ✅
 - Verifica di una versione di un software ✅
 - Puliza file temporanei 
-- Puliza log 
+- Puliza log ✅
 - Controllo dei backup 
 - Start script di backup custom 
 - Verifica delle porte aperte 
