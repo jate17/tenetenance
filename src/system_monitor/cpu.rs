@@ -11,9 +11,9 @@ use sysinfo::{self, System,RefreshKind, CpuRefreshKind};
 /// 
 #[derive(Debug, Clone)]
 pub struct CoreInfo {
-    index: usize,
-    usage: f32,
-    frequency: u64
+    pub index: usize,
+    pub usage: f32,
+    pub frequency: u64
 }
 ///
 /// Struct for the CPU 
@@ -25,10 +25,10 @@ pub struct CoreInfo {
 /// - cores: Muliple CoreInfo struct inside the vector 
 #[derive(Debug, Clone)]
 pub struct Cpu{
-    brand: String, 
-    vendor: String, 
-    frequency: u64,
-    cores: Vec<CoreInfo>
+    pub brand: String, 
+    pub vendor: String, 
+    pub frequency: u64,
+    pub cores: Vec<CoreInfo>
 }
 
 /// Get info form every single core 

@@ -12,10 +12,10 @@ use crate::utils::{conv_bytes_ram};
 /// 
 #[derive(Debug, Clone)]
 pub struct Ram {
-    gb_tot: u32, 
-    gb_used: u32, 
-    swap_tot: u32, 
-    swap_used: u32, 
+    pub gb_tot: u32, 
+    pub gb_used: u32, 
+    pub swap_tot: u32, 
+    pub swap_used: u32, 
 }
 
 
@@ -31,8 +31,10 @@ pub struct Ram {
 /// - Total Swap (GB)
 /// - Used Swap (GB)
 
-pub fn ram_check(mut sys: System) -> Ram {    
+pub fn ram_check() -> Ram {    
+    let mut sys = System::new_all();
 
+    sys.refresh_all();
     let gb_tot : u32 = conv_bytes_ram(sys.total_memory());
     let gb_used : u32 = conv_bytes_ram(sys.used_memory());
     let swap_tot : u32 = conv_bytes_ram(sys.total_swap());

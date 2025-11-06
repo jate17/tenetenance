@@ -34,7 +34,7 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Controllo dei backup 
 - Start script di backup custom 
 - Verifica delle porte aperte ✅
-- Verifica firewall rule 
+- Verifica firewall rule -> Da fare su macchina con Linux o Ubuntu
 - File config YAML 
 
 

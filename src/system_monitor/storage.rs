@@ -10,7 +10,11 @@ use crate::utils::{conv_bytes_storage};
 /// - Available Space -> f64
 /// 
 #[derive(Debug, Clone)]
-pub struct Storage(String, f64, f64);
+pub struct Storage{
+    pub name: String, 
+    pub total_space: f64, 
+    pub available_space: f64
+}
 
 
 /// Check Storage info
@@ -32,8 +36,13 @@ pub fn storage_check() -> Vec<Storage> {
         let available_space = conv_bytes_storage(disk.available_space());
         let total_sapce = conv_bytes_storage(disk.total_space());
         let name = disk.name().to_string_lossy().to_string();
-        let storage = Storage(name, total_sapce, available_space);
-        output.push(storage);
+        output.push(
+            Storage{
+                name: name, 
+                total_space: total_sapce, 
+                available_space: available_space
+            
+        });
     }
 
     output
