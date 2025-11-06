@@ -33,7 +33,7 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Puliza log ✅
 - Controllo dei backup 
 - Start script di backup custom 
-- Verifica delle porte aperte 
+- Verifica delle porte aperte ✅
 - Verifica firewall rule 
 - File config YAML 
 
