@@ -1,5 +1,5 @@
 use sysinfo::{self, Networks};
-use crate::utils::{conv_bytes_to_mb_net};
+use crate::utils::{conv_bytes_to_mb};
 
 /// Struct for Network interface,download, upload 
 #[derive(Debug, Clone)]
@@ -24,8 +24,8 @@ pub fn get_network() -> Vec<Net> {
     networks.refresh(true);
     
     for (interface_name, data) in &networks {
-        let d = conv_bytes_to_mb_net(data.total_received()); 
-        let u = conv_bytes_to_mb_net(data.total_transmitted());
+        let d = conv_bytes_to_mb(data.total_received()); 
+        let u = conv_bytes_to_mb(data.total_transmitted());
         
         output.push(
             Net {

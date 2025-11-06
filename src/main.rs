@@ -8,22 +8,23 @@ mod system_monitor;
 mod utils;
 
 
+
+
 /*
 
     USE
 
 */
-use system_monitor::{cpu_check, ram_check, storage_check, get_users};
-use sysinfo::{self, System, Networks};
-
-
+use system_monitor::{cpu_check, ram_check, storage_check, get_users, get_temperature, process_info};
 
 
 
 fn main() {
     
-    
 }
+
+
+
 
 
 

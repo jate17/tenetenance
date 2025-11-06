@@ -27,7 +27,7 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Ottenimento info sulla cpu  ✅
 - Ottenimento info sugli users  ✅
 - Ottenimento info sul network  ✅
-- Ottenimento info sui i processi 
+- Ottenimento info sui i processi ✅
 - Verifica di una versione di un software 
 - Puliza file temporanei 
 - Puliza log 
@@ -48,4 +48,4 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - API 
 
 
- 
+ git commit -m "Add: Network; Add: Process;"
