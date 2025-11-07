@@ -33,10 +33,10 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Puliza log ✅
 - Verifica delle porte aperte ✅
 - File config YAML 
-- Funzioni di Backup 
-    - Make backup
-    - Checksum dei file 
-- Funzionalità simili a winmerge
+- Funzioni di Backup ✅
+    - Make backup ✅
+    - Checksum dei file ✅ 
+
 
 
 
