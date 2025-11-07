@@ -31,11 +31,10 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Verifica di una versione di un software ✅
 - Puliza file temporanei ✅
 - Puliza log ✅
-- Controllo dei backup 
-- Start script di backup custom 
 - Verifica delle porte aperte ✅
-- Verifica firewall rule -> Da fare su macchina con Linux o Ubuntu
 - File config YAML 
+- Funzioni di Backup 
+- Funzionalità simili a winmerge
 
 
 
@@ -45,4 +44,6 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Windowzz
 - Docker 
 - API 
-
+- Controllo dei backup 
+- Start script di backup custom 
+- Verifica firewall rule -> Da fare su macchina con Linux o Ubuntu
