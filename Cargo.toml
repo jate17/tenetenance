@@ -5,6 +5,9 @@ edition = "2024"
 
 [dependencies]
 chrono = "0.4.42"
+fs_extra = "1.3.0"
 regex = "1.12.2"
+sha2 = "0.10.9"
 sysinfo = "0.37.2"
 uzers = "0.12.1"
+walkdir = "2.5.0"
