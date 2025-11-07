@@ -20,7 +20,7 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
     - Riavvio VPS (manuale o programmato)
 
 
-## Funzioni MVP
+## Funzioni
 
 - Ottenimento info sullo storage ✅
 - Ottenimento info sulla ram  ✅
