@@ -18,16 +18,18 @@ use log::{clean_logs};
 */
 
 
-use fs_extra::copy_items;
+
 use walkdir::{WalkDir, DirEntry};
 
 use std::fmt::format;
+use std::intrinsics::copy;
 use std::path::{Path, PathBuf};
 use std::task::RawWakerVTable;
-use fs_extra::file::{copy_with_progress, CopyOptions, TransitProcess};
 use sha2::{Sha256, Digest};
 use std::fs::File;
 use std::io::{self, BufReader, Read};
+use std::fs;
+use rayon::prelude::*;
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -43,7 +45,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let entry = entry?;
         println!("{}", entry.path().display());
     }
-    */
+
     let file_path = "./log_test/log_nginx.log";
     let d = checksum(file_path);
      let d = checksum(file_path);
@@ -57,7 +59,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
     let s = verify_file_backup(file_path, hash);
     println!("{}", s);
-    
+      */
+     let mut exclude_file: Vec<String> = Vec::new();
+    let mut exclude_dir: Vec<String> = Vec::new();
+    exclude_dir.push("target".to_string());
+    exclude_dir.push(".git".to_string());
+    exclude_file.push(".txt".to_string());
+
+    make_backup("./log_test", "./test" , &exclude_file, &exclude_dir);
     Ok(())
 }
 
@@ -93,7 +102,6 @@ fn verify_file_backup(file_path: &str, checksum_expe: String) -> bool{
             println!("Error: {}", e);
             String::new()
         }
-        
     };
 
 
@@ -135,30 +143,56 @@ fn make_backup(src: &str, dst: &str, exclude_file: &Vec<String>, exclude_dir: &V
     let source = Path::new(src);
     let dest = Path::new(dst);
 
+
+
     if !source.exists() || !source.is_dir() {
         return Err(io::Error::new(io::ErrorKind::NotFound, "Source directory not found"));
     }
 
+
     let walker = WalkDir::new(source).into_iter();
-    for entry in walker.filter_entry(|e| !exclude(e, &exclude_file, &exclude_dir)){
-        let entry = entry?; 
-        let path = entry.path();
 
-        let relative_path = path.strip_prefix(source).unwrap();
+    let entries: Vec<_> = walker
+        .filter_entry(|e| !exclude(e, &exclude_file, &exclude_dir))
+        .filter_map(|e| e.ok())
+        .collect();
 
+    let results: Vec<_> = entries.par_iter().map(|file| -> io::Result<()> {
+        let path = file.path();
+        let relative_path = path.strip_prefix(source).
+        map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e.to_string()))?;
         let dest_path = dest.join(relative_path);
 
-        if entry.file_type().is_dir() {
+        if file.file_type().is_dir() {
             std::fs::create_dir_all(&dest_path)?;
-        }else{
-            let mut opt = CopyOptions::new();
-            opt.overwrite = true;
+        } else {
+            let prepath: &str = path.to_str().ok_or_else(|| 
+                io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8 path"))?;
             
-            copy_items(&[path], &dest_path.parent().unwrap(), &opt);
+            let hash = checksum(prepath).unwrap_or_else(|e| {
+                eprintln!("Error: {}", e);
+                String::new()
+            });
+
+            fs::copy(&path, &dest_path)?;
+
+            let predest: &str = dest_path.to_str().ok_or_else(|| 
+                io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8 dest path"))?;
+            
+            if !verify_file_backup(predest, hash) {
+                eprintln!("Backup verification failed for {}", predest);
+            }
         }
+        
+        Ok(())
+    }).collect();
 
 
     
+    for result in results {
+        if let Err(e) = result {
+            println!("Errore: {}", e);
+        }
     }
     Ok(())
 }

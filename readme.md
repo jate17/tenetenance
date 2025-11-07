@@ -34,20 +34,11 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Verifica delle porte aperte ✅
 - File config YAML 
 - Funzioni di Backup 
+    - Make backup
+    - Checksum dei file 
 - Funzionalità simili a winmerge
 
-backup_file(source_path: &str, destination_path: &str) -> Result<()>
-Copia un singolo file dalla sorgente alla destinazione, con gestione degli errori.
-backup_directory(source_dir: &str, destination_dir: &str) -> Result<()>
-Copia ricorsivamente tutti i file e sottodirectory da una cartella sorgente a quella di destinazione.
-compress_backup(backup_path: &str, compressed_path: &str) -> Result<()>
-Comprimi il contenuto di un backup vecchio (file o directory) in un archivio compresso (ad es. gzip o xz).
-verify_backup(file_path: &str, expected_hash: &str) -> Result<bool>
-Calcola l’hash di un file di backup e lo confronta con un valore atteso per assicurare integrità.
-list_backups(backup_root: &str) -> Result<Vec<String>>
-Elenca tutti i backup esistenti in una directory per gestione e selezione.
-delete_backup(backup_path: &str) -> Result<()>
-Elimina backup vecchi o non necessari per liberare spazio.
+
 
 ## Next 
 
