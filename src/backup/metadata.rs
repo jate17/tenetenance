@@ -1,16 +1,16 @@
 use bincode::{Encode, Decode};
 
 #[derive(Encode, Decode, Debug)]
-struct FileInfo {
-    relative_path: String,
-    hash: String,
-    timestamp: u64,
-    size: u64,
+pub struct FileInfo {
+    pub relative_path: String,
+    pub hash: String,
+    pub timestamp_modified: u64,
+    pub timestamp_backup: u64,
 }
 
 #[derive(Encode, Decode, Debug)]
-struct BackupMetadata {
-    files: Vec<FileInfo>,
+pub struct BackupMetadata {
+    pub files: Vec<FileInfo>,
 }
 
 pub fn save_metadata(metadata: &BackupMetadata) -> std::io::Result<()> {
@@ -26,22 +26,3 @@ pub fn load_metadata() -> std::io::Result<BackupMetadata> {
     Ok(metadata)
 }
 
-
-/* 
-fn main() {
-    let metadata = BackupMetadata {
-        files: vec![
-            FileInfo {
-                relative_path: "documents/file.txt".to_string(),
-                hash: "abc123".to_string(),
-                timestamp: 1730943600,
-                size: 1024,
-            }
-        ],
-    };
-
-    save_metadata(&metadata).unwrap();
-    let loaded = load_metadata().unwrap();
-    println!("{:?}", loaded);
-}
-*/

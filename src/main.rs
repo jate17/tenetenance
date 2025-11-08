@@ -15,46 +15,30 @@ mod backup;
 
     use system_monitor::{cpu_check, ram_check, storage_check, get_users, get_temperature, process_info};
     use log::{clean_logs};
+    use backup::make_backup;
 */
-
-use backup::make_backup;
-
+use backup::{make_backup, checksum, verify_file_backup, get_current_timestamp, get_last_modified, exclude};
 
 
+use walkdir::{WalkDir, DirEntry};
+use core::time;
+use std::path::{Path};
+use sha2::{Sha256, Digest};
+use std::fs::File;
+use std::io::{self, BufReader, Read};
+use std::fs;
+use rayon::prelude::*;
+use crate::backup::{BackupMetadata, FileInfo, load_metadata, save_metadata};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> std::io::Result<()>  {
 
-   
-    let mut exclude_file: Vec<String> = Vec::new();
-    let mut exclude_dir: Vec<String> = Vec::new();
-    exclude_dir.push("target".to_string());
-    exclude_dir.push(".git".to_string());
-    exclude_file.push(".txt".to_string());
-
-    make_backup("./log_test", "./test" , &exclude_file, &exclude_dir);
+    
     Ok(())
 }
 
-
-
-fn sync_backup() {
-     
-    /*
-        Struct data
-
-            relative_path,
-            hash,
-            timestemp,
-            backup_timestamp
-            
-    
-     */
-
-
-
-}
 
 
 

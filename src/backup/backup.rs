@@ -1,16 +1,15 @@
 use walkdir::{WalkDir, DirEntry};
-
-use std::fmt::format;
-use std::intrinsics::copy;
-use std::path::{Path, PathBuf};
-use std::task::RawWakerVTable;
+use std::path::{Path};
 use sha2::{Sha256, Digest};
 use std::fs::File;
 use std::io::{self, BufReader, Read};
 use std::fs;
 use rayon::prelude::*;
+use crate::backup::{BackupMetadata, FileInfo, save_metadata, load_metadata};
+use std::time::{SystemTime, UNIX_EPOCH};
 
-fn exclude(entry: &DirEntry,exclude_file: &Vec<String>, exclude_dir: &Vec<String>) -> bool {
+
+pub fn exclude(entry: &DirEntry,exclude_file: &Vec<String>, exclude_dir: &Vec<String>) -> bool {
     
     let filename = match entry.file_name().to_str(){
         Some(name) => name, 
@@ -33,7 +32,7 @@ fn exclude(entry: &DirEntry,exclude_file: &Vec<String>, exclude_dir: &Vec<String
 }  
 
 
-fn verify_file_backup(file_path: &str, checksum_expe: String) -> bool{
+pub fn verify_file_backup(file_path: &str, checksum_expe: &str) -> bool{
     let d = checksum(file_path);
     let hash = match d {
         Ok(h) => h,
@@ -51,7 +50,7 @@ fn verify_file_backup(file_path: &str, checksum_expe: String) -> bool{
     false
 }
 
-fn checksum(file_path: &str) -> Result<String, Box<dyn std::error::Error>> {
+pub fn checksum(file_path: &str) -> Result<String, Box<dyn std::error::Error>> {
 
 
     let file = File::open(file_path)?;
@@ -75,14 +74,45 @@ fn checksum(file_path: &str) -> Result<String, Box<dyn std::error::Error>> {
 
 }
 
+pub fn get_current_timestamp() -> u64 {
+    let now = SystemTime::now();
+    let duration = now.duration_since(UNIX_EPOCH)
+        .expect("Error data too old");
+    
+    duration.as_secs()  
+}
+
+pub fn get_last_modified(path: &str) -> u64 {
+    let metadata = match fs::metadata(path) {
+        Ok(m) => m,
+        Err(e) => {
+            eprintln!("Errore metadata: {}", e);
+            return 0;
+        }
+    };
+    
+    let modified = match metadata.modified() {
+        Ok(m) => m,
+        Err(e) => {
+            eprintln!("Errore modified: {}", e);
+            return 0;
+        }
+    };
+    
+    let duration = modified.duration_since(UNIX_EPOCH)
+        .unwrap_or_default();
+    
+    duration.as_secs()
+}
 
 pub fn make_backup(src: &str, dst: &str, exclude_file: &Vec<String>, exclude_dir: &Vec<String>) -> io::Result<()> {
 
 
     let source = Path::new(src);
     let dest = Path::new(dst);
+    let mut metadata_bincode = BackupMetadata{files: Vec::new()};
 
-
+  
 
     if !source.exists() || !source.is_dir() {
         return Err(io::Error::new(io::ErrorKind::NotFound, "Source directory not found"));
@@ -96,7 +126,7 @@ pub fn make_backup(src: &str, dst: &str, exclude_file: &Vec<String>, exclude_dir
         .filter_map(|e| e.ok())
         .collect();
 
-    let results: Vec<_> = entries.par_iter().map(|file| -> io::Result<()> {
+    let results: Vec<_> = entries.par_iter().map(|file| -> io::Result<Option<FileInfo>> {
         let path = file.path();
         let relative_path = path.strip_prefix(source).
         map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e.to_string()))?;
@@ -104,34 +134,147 @@ pub fn make_backup(src: &str, dst: &str, exclude_file: &Vec<String>, exclude_dir
 
         if file.file_type().is_dir() {
             std::fs::create_dir_all(&dest_path)?;
+            Ok(None)
         } else {
             let prepath: &str = path.to_str().ok_or_else(|| 
                 io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8 path"))?;
             
-            let hash = checksum(prepath).unwrap_or_else(|e| {
+             let hash = checksum(prepath).unwrap_or_else(|e| {
                 eprintln!("Error: {}", e);
                 String::new()
             });
-
+            
             fs::copy(&path, &dest_path)?;
 
             let predest: &str = dest_path.to_str().ok_or_else(|| 
                 io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8 dest path"))?;
             
-            if !verify_file_backup(predest, hash) {
+            if !verify_file_backup(predest, &hash) {
                 eprintln!("Backup verification failed for {}", predest);
             }
-        }
+           let timestamp_modified = get_last_modified(prepath);
+           let timestamp_backup = get_current_timestamp();
+            
+
         
-        Ok(())
+
+           Ok(Some(FileInfo {
+                relative_path: relative_path.to_string_lossy().to_string(),
+                hash: hash,
+                timestamp_modified,
+                timestamp_backup,
+            }))
+        }
+    
     }).collect();
 
 
     
     for result in results {
-        if let Err(e) = result {
-            println!("Errore: {}", e);
+        match result {
+            Ok(Some(file_info)) => metadata_bincode.files.push(file_info),
+            Ok(None) => {},  // Era una directory
+            Err(e) => eprintln!("Errore durante il backup: {}", e),
         }
     }
+
+    save_metadata(&metadata_bincode);
+
+    Ok(())
+}
+
+
+
+pub fn sync_backup(src: &str, dst: &str, exclude_file: &Vec<String>, exclude_dir: &Vec<String>) -> io::Result<()> {
+    let source = Path::new(src);
+    let dest = Path::new(dst);
+    let mut metadata_bincode = BackupMetadata { files: Vec::new() };
+    
+
+    let existing_metadata = load_metadata().ok().map(|m| m.files).unwrap_or_default();
+
+    if !source.exists() || !source.is_dir() {
+        return Err(io::Error::new(io::ErrorKind::NotFound, "Source directory not found"));
+    }
+
+    let walker = WalkDir::new(source).into_iter();
+    let entries: Vec<_> = walker
+        .filter_entry(|e| !exclude(e, &exclude_file, &exclude_dir))
+        .filter_map(|e| e.ok())
+        .collect();
+
+    let results: Vec<_> = entries.par_iter().map(|file| -> io::Result<Option<FileInfo>> {
+        let path = file.path();
+        let relative_path = path.strip_prefix(source)
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e.to_string()))?;
+        let dest_path = dest.join(relative_path);
+
+
+        if file.file_type().is_dir() {
+            std::fs::create_dir_all(&dest_path)?;
+            return Ok(None);  
+        }
+
+        let prepath: &str = path.to_str()
+            .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8 path"))?;
+        
+        let relative_path_str = relative_path.to_string_lossy().to_string();
+        
+        let existing_file = existing_metadata.iter()
+            .find(|f| f.relative_path == relative_path_str);
+
+        let should_backup = match existing_file {
+            Some(file_info) => {
+                let timestamp_modified = get_last_modified(prepath);
+                timestamp_modified > file_info.timestamp_modified
+            },
+            None => true,  
+        };
+
+        if should_backup {
+            let hash = checksum(prepath).unwrap_or_else(|e| {
+                eprintln!("Error calculating checksum: {}", e);
+                String::new()
+            });
+
+            fs::copy(&path, &dest_path)?;
+
+            let predest: &str = dest_path.to_str()
+                .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "Invalid UTF-8 dest path"))?;
+            
+            if !verify_file_backup(predest, &hash) {
+                eprintln!("Backup verification failed for {}", predest);
+            }
+
+            let timestamp_modified = get_last_modified(prepath);
+            let timestamp_backup = get_current_timestamp();
+
+            Ok(Some(FileInfo {
+                relative_path: relative_path_str,
+                hash,
+                timestamp_modified,
+                timestamp_backup,
+            }))
+        } else {
+
+            Ok(existing_file.map(|f| FileInfo {
+                relative_path: f.relative_path.clone(),
+                hash: f.hash.clone(),
+                timestamp_modified: f.timestamp_modified,
+                timestamp_backup: f.timestamp_backup,
+            }))
+        }
+    }).collect();
+
+
+    for result in results {
+        match result {
+            Ok(Some(file_info)) => metadata_bincode.files.push(file_info),
+            Ok(None) => {},
+            Err(e) => eprintln!("Errore durante il backup: {}", e),
+        }
+    }
+
+    save_metadata(&metadata_bincode);
     Ok(())
 }
