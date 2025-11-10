@@ -1,12 +1,14 @@
 use bincode::{Encode, Decode};
 
-#[derive(Encode, Decode, Debug)]
+#[derive(Encode, Decode, Debug, Clone)]
 pub struct FileInfo {
     pub relative_path: String,
     pub hash: String,
     pub timestamp_modified: u64,
     pub timestamp_backup: u64,
+    pub deleted: bool,  
 }
+
 
 #[derive(Encode, Decode, Debug)]
 pub struct BackupMetadata {

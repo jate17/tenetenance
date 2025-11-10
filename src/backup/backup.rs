@@ -163,6 +163,7 @@ pub fn make_backup(src: &str, dst: &str, exclude_file: &Vec<String>, exclude_dir
                 hash: hash,
                 timestamp_modified,
                 timestamp_backup,
+                deleted: false
             }))
         }
     
@@ -183,8 +184,6 @@ pub fn make_backup(src: &str, dst: &str, exclude_file: &Vec<String>, exclude_dir
     Ok(())
 }
 
-
-
 pub fn sync_backup(src: &str, dst: &str, exclude_file: &Vec<String>, exclude_dir: &Vec<String>) -> io::Result<()> {
     let source = Path::new(src);
     let dest = Path::new(dst);
@@ -203,12 +202,14 @@ pub fn sync_backup(src: &str, dst: &str, exclude_file: &Vec<String>, exclude_dir
         .filter_map(|e| e.ok())
         .collect();
 
+  
+    let mut current_files = std::collections::HashSet::new();
+
     let results: Vec<_> = entries.par_iter().map(|file| -> io::Result<Option<FileInfo>> {
         let path = file.path();
         let relative_path = path.strip_prefix(source)
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e.to_string()))?;
         let dest_path = dest.join(relative_path);
-
 
         if file.file_type().is_dir() {
             std::fs::create_dir_all(&dest_path)?;
@@ -254,24 +255,43 @@ pub fn sync_backup(src: &str, dst: &str, exclude_file: &Vec<String>, exclude_dir
                 hash,
                 timestamp_modified,
                 timestamp_backup,
+                deleted: false,  
             }))
         } else {
-
             Ok(existing_file.map(|f| FileInfo {
                 relative_path: f.relative_path.clone(),
                 hash: f.hash.clone(),
                 timestamp_modified: f.timestamp_modified,
                 timestamp_backup: f.timestamp_backup,
+                deleted: false, 
             }))
         }
     }).collect();
 
-
+  
     for result in results {
         match result {
-            Ok(Some(file_info)) => metadata_bincode.files.push(file_info),
+            Ok(Some(file_info)) => {
+                current_files.insert(file_info.relative_path.clone());
+                metadata_bincode.files.push(file_info);
+            },
             Ok(None) => {},
             Err(e) => eprintln!("Errore durante il backup: {}", e),
+        }
+    }
+
+
+    for old_file in existing_metadata.iter() {
+        if !current_files.contains(&old_file.relative_path) && !old_file.deleted {
+            metadata_bincode.files.push(FileInfo {
+                relative_path: old_file.relative_path.clone(),
+                hash: old_file.hash.clone(),
+                timestamp_modified: old_file.timestamp_modified,
+                timestamp_backup: get_current_timestamp(),
+                deleted: true,
+            });
+        } else if old_file.deleted {
+            metadata_bincode.files.push(old_file.clone());
         }
     }
 

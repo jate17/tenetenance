@@ -6,6 +6,7 @@ pub mod network;
 pub mod temperature;
 pub mod process;
 pub mod version;
+pub mod utils;
 
 pub use cpu::{Cpu, CoreInfo, cpu_check};
 pub use memory::{Ram, ram_check};
@@ -15,3 +16,4 @@ pub use network::{Net, get_network, Ports, get_open_connection};
 pub use temperature::{Temp, get_temperature};
 pub use process::{ProcessInfo, process_info};
 pub use version::{Version, get_version};
+pub use utils::{health_cal};

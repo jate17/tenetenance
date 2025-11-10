@@ -32,16 +32,18 @@ Sviluppo delle seguenti funzioni di base al momento supporto solo su sistemi di 
 - Puliza file temporanei ✅
 - Puliza log ✅
 - Verifica delle porte aperte ✅
-- File config YAML 
 - Funzioni di Backup ✅
     - Make backup ✅
     - Checksum dei file ✅ 
+- Logs ✅
 
+## BUG
 
+- sync_backup non prendere in cosdierazione i file eliminati
 
 
 ## Next 
-
+- File config YAML 
 - Gestione VM
 - Windowzz
 - Docker 

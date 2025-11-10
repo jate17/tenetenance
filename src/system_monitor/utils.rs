@@ -1,4 +1,9 @@
 
+use crate::system_monitor::{ram_check};
+use crate::system_monitor::{cpu_check};
+use crate::system_monitor::{storage_check};
+
+
 /*
 
 Piu + alto meglio è
