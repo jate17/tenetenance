@@ -1,5 +1,5 @@
 use sysinfo::{self, System,RefreshKind, CpuRefreshKind};
-
+use crate::logs::{Logs};
 
 
 /// Struct for che Single Core 
@@ -70,13 +70,18 @@ pub fn cpu_check() -> Cpu {
     sys.refresh_cpu_all();
 
      let cpu = sys.cpus().first()
-        .expect("CPU not found");
+        .expect({
+            let _ = Logs::error("CPU not found");
+            "CPU not found"
+        });
 
     let brand = cpu.brand().to_string();
     let vendor = cpu.vendor_id().to_string();
     let frequency = cpu.frequency();
 
     let cores = get_cpu_cores(sys);
+    
+    let _ = Logs::trace("CPU Check");
 
     Cpu {
         brand,

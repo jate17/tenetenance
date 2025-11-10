@@ -1,7 +1,7 @@
 use sysinfo::{self, Networks};
 use crate::utils::{conv_bytes_to_mb};
 use std::process::Command;
-
+use crate::logs::{Logs};
 
 /// Struct for Network interface,download, upload 
 #[derive(Debug, Clone)]
@@ -37,6 +37,7 @@ pub fn get_network() -> Vec<Net> {
             }
         );
     }
+    let _ = Logs::trace("Network Check");
 
     output    
 }
@@ -87,6 +88,8 @@ pub fn get_open_connection()  -> Result<Vec<Ports>, Box<dyn std::error::Error>> 
                     ip: parts[8].to_string() });   
         }
     }
+
+    let _ = Logs::trace("Open connection check");
 
     Ok(output)
 }

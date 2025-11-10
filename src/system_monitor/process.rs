@@ -1,6 +1,6 @@
 use sysinfo::{self, System};
 use chrono::{DateTime, Utc};
-
+use crate::logs::{Logs};
 
 use crate::utils::{conv_bytes_to_mb, conv_bytes_ram};
 
@@ -60,6 +60,6 @@ pub fn process_info() -> Vec<ProcessInfo> {
                 .unwrap_or_else(|| "Unknown".to_string()),  // Default se None
         });
     }
-
+    let _ = Logs::trace("Grep process");
     output
 }

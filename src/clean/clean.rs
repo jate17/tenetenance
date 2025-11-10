@@ -1,5 +1,7 @@
 use std::fs; 
 use std::time::{SystemTime, UNIX_EPOCH};
+use crate::logs::{Logs};
+
 
 pub fn clean_logs(log_dir: &str, keep_days: u64) -> Result<usize, Box<dyn std::error::Error>> {
     let cutoff_time = SystemTime::now()
@@ -25,7 +27,7 @@ pub fn clean_logs(log_dir: &str, keep_days: u64) -> Result<usize, Box<dyn std::e
             }
         }
     }
-
+    let _ = Logs::info(&format!("Logs deleted: {}", deleted_count));
     Ok(deleted_count)
 }
 
@@ -53,11 +55,14 @@ pub fn clean_temp_files(max_age_days: u64) -> Result<usize, Box<dyn std::error::
                     Ok(_) => {
                         deleted_count += 1;
                     }
-                    Err(e) => println!("Errore: {}", e),
+                    Err(e) => {
+                        let _ = Logs::error(&format!("Error temp files: {}", e));                    
+                        println!("Errore: {}", e)
+                    },
                 }
             }
         }
     }
-
+    let _ = Logs::info(&format!("Temp files deleted: {}", deleted_count));
     Ok(deleted_count)
 }

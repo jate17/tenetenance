@@ -1,6 +1,6 @@
 use std::{process::Command};
 use regex::Regex;
-use std::io::Error;
+use crate::logs::{Logs};
 
 
 #[derive(Debug, Clone)]
@@ -20,18 +20,23 @@ pub fn get_version(software: String) -> Result<Version, String> {
     let output = Command::new(&software)
         .arg("--version")
         .output()
-        .map_err(|e| format!("Errore nell'esecuzione: {}", e))?;
+        .map_err(|e| {
+            let _ = Logs::error(&format!("Error get version: {}", e));
+            format!("Errore nell'esecuzione: {}", e)
+        })?;
 
     if output.status.success() {
         let version_str = String::from_utf8_lossy(&output.stdout).to_string();
         let version = extract_version(&version_str)
             .ok_or_else(|| "Versione non trovata".to_string())?;
-
+        let _ = Logs::trace(&format!("Get Version on {}", software));
         Ok(Version {
             name: software,
             version,
         })
+        
     } else {
+        let _ = Logs::error(&format!("Error command failed"));
         Err("Comando fallito".to_string())
     }
 }

@@ -1,6 +1,6 @@
 use sysinfo::{self, System};
 use crate::utils::{conv_bytes_ram};
-
+use crate::logs::{Logs};
 
 ///
 /// Struct for RAM info 
@@ -39,7 +39,9 @@ pub fn ram_check() -> Ram {
     let gb_used : u32 = conv_bytes_ram(sys.used_memory());
     let swap_tot : u32 = conv_bytes_ram(sys.total_swap());
     let swap_used : u32 = conv_bytes_ram(sys.used_swap());
-
+    
+    let _ = Logs::trace("RAM Check");
+    
     Ram{
         gb_tot, 
         gb_used, 

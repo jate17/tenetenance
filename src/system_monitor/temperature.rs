@@ -1,4 +1,5 @@
 use sysinfo::{self, System, Components};
+use crate::logs::{Logs};
 
 #[derive(Debug, Clone)]
 pub struct Temp {
@@ -27,6 +28,7 @@ pub fn get_temperature() -> Vec<Temp> {
             critical: crit
         })
     }
+    let _ = Logs::trace("Temperature check");
 
     output
 }

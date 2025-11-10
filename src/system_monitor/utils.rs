@@ -2,7 +2,7 @@
 use crate::system_monitor::{ram_check};
 use crate::system_monitor::{cpu_check};
 use crate::system_monitor::{storage_check};
-
+use crate::logs::{Logs};
 
 /*
 
@@ -53,6 +53,6 @@ pub fn health_cal(wcpu: f64, wram: f64, wstorage: f64) -> f64 {
 
 
     let health: f64 = wcpu * (1.0 - avg_core) + wram * (1.0 - avg_ram) + wstorage * ( 1.0 - avg_store) ; 
-    
+    let _ = Logs::trace(&format!("Health check: {}", health));
     health
 }

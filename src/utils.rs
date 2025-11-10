@@ -19,7 +19,7 @@ pub fn conv_bytes_ram(bytes: u64) -> u32 {
 /// - Velues in Gibaytes -> f64 
 
 pub fn conv_bytes_storage(bytes: u64) -> f64 {
-    (bytes as f64 / 1_000_000_000.0)
+    bytes as f64 / 1_000_000_000.0
 }
 
 

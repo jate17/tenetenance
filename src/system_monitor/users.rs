@@ -1,4 +1,8 @@
 use uzers::{all_users};
+use crate::logs::{Logs};
+
+
+
 ///
 /// Struct for user  
 /// 
@@ -42,6 +46,6 @@ pub fn get_users() -> Vec<User>{
             groups
         });
     }
-
+    let _ = Logs::trace("Users check");
     output
 }

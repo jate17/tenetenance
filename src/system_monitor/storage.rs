@@ -1,6 +1,6 @@
 use sysinfo::{self, System, Disks};
 use crate::utils::{conv_bytes_storage};
-
+use crate::logs::{Logs};
 
 ///
 /// Struct for Storage Info 
@@ -44,6 +44,6 @@ pub fn storage_check() -> Vec<Storage> {
             
         });
     }
-
+    let _ = Logs::trace("Storage check");
     output
 }
