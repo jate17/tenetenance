@@ -1,7 +1,7 @@
 
-use std::fs::{File, OpenOptions, exists};
+use std::fs::{File, exists};
 use std::io::{self, Write};
-use chrono::Local;
+
 
 
 pub const FILE_LOG_PATH: &str = "./log.log";
@@ -36,6 +36,15 @@ impl Logs {
          
         let timestamp = chrono::Local::now().format("%Y-%m-%d %H:%M:%S");
         writeln!(file, "[TRACE]({}) {}", timestamp, message)?;
+
+        Ok(())
+    }
+
+    pub fn info(message: &str) -> io::Result<()> {
+        let mut file = Logs::open_log()?;
+         
+        let timestamp = chrono::Local::now().format("%Y-%m-%d %H:%M:%S");
+        writeln!(file, "[INFO]({}) {}", timestamp, message)?;
 
         Ok(())
     }

@@ -23,13 +23,16 @@ mod logs;
 
 
 use logs::{Logs};
-
+use backup::{sync_backup};
 
 
 fn main() -> std::io::Result<()>  {
 
-    Logs::open_log();
-    Logs::trace("Test");
+    let mut exclude_file: Vec<String> = Vec::new();
+    let mut exclude_dir: Vec<String>= Vec::new();
+    exclude_dir.push(".git".to_string());
+    exclude_file.push("bla".to_string());
+    let _ = sync_backup("./log_test", "./backup", &exclude_file, &exclude_dir);
     
     Ok(())
 }

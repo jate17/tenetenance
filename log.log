@@ -1,1 +1,3 @@
-[TRACE](2025-11-10 18:53:55) Test
+[INFO](2025-11-10 19:38:34) Sync backup
+[INFO](2025-11-10 19:38:34) Backup completed 2 file successed; 0 errors
+[INFO](2025-11-10 19:38:34) Metadata bincode update
