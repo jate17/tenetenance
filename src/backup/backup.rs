@@ -1,4 +1,4 @@
-use bincode::error;
+
 use walkdir::{WalkDir, DirEntry};
 use std::path::{Path};
 use sha2::{Sha256, Digest};

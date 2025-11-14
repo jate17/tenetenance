@@ -1,28 +1,29 @@
-use std::process::Command;
-
-/*
-
-Docker Command
+use bollard::Docker;
 
 
-- docker stats <container_id_o_nome>
-- docker container stats
-- docker ps
-- docker ps -all
-- docker logs -f <container_name>
-- docker inspect <container_name> (or <container_id>)
+pub struct ManageDocker {
+    Client: Docker
+}
 
 
-*/
+impl ManageDocker {
 
-pub fn get_all_docker_stats()  -> Result<Vec<Ports>, Box<dyn std::error::Error>> {
-    let output = Command::new("lsof")
-        .arg("-i")
-        .arg("-P")
-        .arg("-n")  
-        .output()?;
-    
-    let result = String::from_utf8_lossy(&output.stdout);
-    
+    pub async fn new() -> Result<Self, bollard::errors::Error>{
+        let client = Docker::connect_with_local_defaults()?;
+        Ok( ManageDocker {client})
+    }
+
+    pub async fn health(&self) -> bool {
+        self.client.ping().await.is_ok()
+    }
+
+    pub async fn get_info(&self) -> Result<String, bollard::errors::Error> {
+        let info = self.client.info().await?;
+
+        
+
+    } 
+
+
 
 }
