@@ -104,7 +104,7 @@ Se trovi vulnerabilità di sicurezza, per favore **NON** aprire issue pubbliche.
 
 ## 👤 Autore
 
-**[Il tuo nome]**
+**[Jate]**
 
 - GitHub: [@jate17](https://github.com/jate17)
 
