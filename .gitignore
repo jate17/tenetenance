@@ -2,3 +2,5 @@
 ./todo.md
 ./cli/backup
 ./cli/log_test
+./cli/target
+./server/target
