@@ -1,7 +1,85 @@
-/target
-./todo.md
-/cli/backup
-/cli/log_test
-/cli/target
-/server/target
-./cli/log.log
+# Rust Build Artifacts
+/target/
+**/target/
+debug/
+release/
+Cargo.lock
+
+# Backup files
+**/backup/
+*.bak
+*.backup
+backup_*
+
+# Log files
+*.log
+**/log/
+**/logs/
+log_test/
+**/*.log
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+**/tmp/
+
+# Documentation
+todo.md
+TODO.md
+notes.md
+NOTES.md
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated files
+generated/
+dist/
+build/
+
+# OS specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test artifacts
+test_output/
+coverage/
+*.profraw
+*.profdata
+
+# Compiled binaries
+**/*.exe
+**/*.dll
+**/*.so
+**/*.dylib
+
+# Package manager
+node_modules/
+package-lock.json
+
+# Frontend build (se usi React/Vue)
+frontend/dist/
+frontend/build/
+frontend/node_modules/
+
+# Rust specific
+**/*.rs.bk
+*.pdb
