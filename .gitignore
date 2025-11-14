@@ -1,7 +1,7 @@
 /target
-/todo.md
+./todo.md
 /cli/backup
 /cli/log_test
 /cli/target
 /server/target
-/cli/log.log
+./cli/log.log
