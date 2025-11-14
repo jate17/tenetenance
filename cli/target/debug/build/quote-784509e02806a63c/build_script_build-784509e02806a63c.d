@@ -1,5 +1,0 @@
-/Users/fred/wf/pj_rust/tenetenance/target/debug/build/quote-784509e02806a63c/build_script_build-784509e02806a63c.d: /Users/fred/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.42/build.rs
-
-/Users/fred/wf/pj_rust/tenetenance/target/debug/build/quote-784509e02806a63c/build_script_build-784509e02806a63c: /Users/fred/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.42/build.rs
-
-/Users/fred/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.42/build.rs:
